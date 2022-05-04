@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hoüse Craft - Game</title>
+
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <script> let socket=io(); </script>
+    
+    <div>
+        <input type="checkbox" id="niv1" name="niv1">
+        <label for="niv1">Niveau 1</label>
+        <input type="checkbox" id="niv2" name="niv2">
+        <label for="niv2">Niveau 2</label>
+        <input type="checkbox" id="niv3" name="niv3">
+        <label for="niv3">Niveau 3</label>
+
+        <button id="good">Validate</button>
+    </div>
+
+    <script src="../JS/game.js"></script>
+</body>
+</html>
