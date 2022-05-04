@@ -9,7 +9,9 @@ Run this followed commands:
 # Install dependencies (only the first time)
 npm install
 
-# Run the local server at localhost:8080
+!!!IMPORTANT!!! Pour run le index.html depuis visual code: en haut cliquer sur affichage, puis terminal;quand il est là entrez la commande en dessous
+npm run dev
+(# Run the local server at localhost:8080)
 npm run dev
 
 # Build for production in the dist/ directory
