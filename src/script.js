@@ -3,6 +3,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import * as dat from 'dat.gui'
+import gsap from 'gsap'
 
 // Debug
 const gui = new dat.GUI() //Petit tableau en haut pour ajouter des trucs
@@ -22,21 +23,23 @@ const scene = new THREE.Scene()
 //var dirLight = new THREE.DirectionalLight( 0xffffff, 0.8 ); pareil
 //scene.add( dirLight );
 
-const pointLight = new THREE.PointLight(0xffffff, 3); //Lumière statique de côté pour éclairer les polygones
+const pointLight = new THREE.PointLight(0xffffff, 3); //Lumière statique du dessus pour éclairer les polygones
 pointLight.position.x = 0;
-pointLight.position.y = 3;
+pointLight.position.y = 0.2;
 pointLight.position.z = 0;
-const pointLight2 = new THREE.PointLight(0xffffff, 1); //Pareil
-pointLight2.position.x = 3;
-pointLight2.position.y = 0;
-pointLight2.position.z = 0;
-const pointLight3 = new THREE.PointLight(0xffffff, 2); //Pareil du dessus
+const pointLight2 = new THREE.PointLight(0xffffff, 1); //Pareil de côté
+pointLight2.position.x = 10;
+pointLight2.position.y = 0.3;
+pointLight2.position.z = -10;
+const pointLight3 = new THREE.PointLight(0xffffff, 2); //Pareil
 pointLight3.position.x = 0;
 pointLight3.position.y = 0;
-pointLight3.position.z = 3;
+pointLight3.position.z = 2;
 scene.add(pointLight);
 scene.add(pointLight2);
 scene.add(pointLight3);
+//scene2.add(pointLight2);
+//scene2.add(pointLight3);
 
 /**
  * Sizes
@@ -64,18 +67,18 @@ window.addEventListener('resize', () =>
 /**
  * Axes
  */
-const axesHelper = new THREE.AxesHelper( 5 ); //Pour afficher les axes mais on peut l'enlever; pour s'aider
-scene.add( axesHelper );
+//const axesHelper = new THREE.AxesHelper( 5 ); //Pour afficher les axes mais on peut l'enlever; pour s'aider
+//scene.add( axesHelper );
 
 /**
  * Camera
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
-camera.position.x = 0; //Position de la caméra
-camera.position.y = 10;
-camera.position.z = 0;
-camera.lookAt(0,0,0); //Là où elle regarde (donc ici le centre)
+camera.position.x = 11; //Position de la caméra
+camera.position.y = 3;
+camera.position.z = 0;                             //Pour la caméra qui va transitionner on commence pas à 0
+camera.lookAt(-10,-25,0); //Là où elle regarde (donc ici le centre)         //Pareil sinon ça regarde pas en 0,0
                     //Comme elle est en hauteur elle regarde vers le bas
 scene.add(camera);
 
@@ -96,27 +99,41 @@ renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
 /**
- * Loader
+ * Loader //////////////////////////////////////////////////////////////////////////:
  */
 const loader = new GLTFLoader();
+let tl=gsap.timeline(); //sert à l'animation
+
 loader.load( 'firstterrain_principled.glb', function ( gltf ) { //Le modèle du sol ,vient de blender
     
-    //gltf.scene.scale.set(0.5, 0.5, 0.5); //Pour rétrécir/gorssir l'objet
+    //gltf.scene.scale.set(0.5, 0.5, 0.5); //Pour rétrécir/grossir l'objet
     /*gltf.scene.traverse( child => {
-
         if ( child.material ) child.material.metalness = 0;
-    
-    } ); Force le metalness à 0, uniquement parfois utilisé si un modèle 3D est sans couleurs  */
+    } ); Force le metalness à 0, uniquement parfois utilisé si un modèle 3D est sans couleurs*/
+    gltf.scene.rotation.y=4.7;
+    scene.add( gltf.scene ); //Première fois qu'on load la scène, elle apparait donc dès le début
 
-	scene.add( gltf.scene );
-    gui.add(gltf.scene.rotation,'x').min(0).max(9); //Pour "rotationner" l'objet, pas la caméra
-    gui.add(gltf.scene.rotation,'z').min(0).max(9);
-    gui.add(gltf.scene.rotation,'y').min(0).max(9);
+    setTimeout(function() { //Avec du délai, on décide de l'enlever
+        scene.remove(gltf.scene);
+      }, 4000);
+    //gui.add(gltf.scene.rotation,'x').min(0).max(9); //Pour "rotationner" l'objet, pas la caméra
+    //gui.add(gltf.scene.rotation,'z').min(0).max(9);
+    //gui.add(gltf.scene.rotation,'y').min(0).max(9);
+/**
+ * Animation de départ (compris dans le loader)
+ */
+    
+    tl.to(camera.position,{x:10,y:8,ease:"none",duration:2});
+});
+loader.load( 'Desert.glb', function ( gltf2 ) {
+    setTimeout(function() { //On l'ajoute au même moment qu'on enlève l'autre
+        scene.add(gltf2.scene);
+      }, 4000);
+
 });
 
-
 /**
- * Animate
+ * Animate,
  */
 
 const clock = new THREE.Clock()
@@ -131,7 +148,9 @@ const tick = () =>
     // controls.update()
 
     // Render
-    renderer.render(scene, camera)
+    renderer.autoClear=false;
+
+    renderer.render(scene, camera);
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
