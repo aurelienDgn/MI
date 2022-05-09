@@ -54,7 +54,7 @@ newP.addEventListener('click', function(){
 
 
 // IL FAAUT REINITIALISER LA CLASSE (SCORE/PSEUDO) DANS LE SERVEUR QUAND ON REVIENT SUR LA PAGE DACCUEIL
-
+// Via socket
 
 // Récupère le pseudo et vérifie qu'il ne soit pas vide et fasse entre 3 et 12 caractères
 function getPseudo(){

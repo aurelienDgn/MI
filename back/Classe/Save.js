@@ -4,7 +4,7 @@ class Save{
         this.pseudo = "";
         this.nbLevel = 3;
         this.levelChecked = new Array(this.nbLevel);
-        
+        this.content = 0;
     }
 
     setPseudo(pseudo){
@@ -30,6 +30,14 @@ class Save{
         for(let i=0;i<this.nbLevel;i++){
             this.levelChecked[i] = 0;
         }
+    }
+
+    setContent(c){
+        this.content = c;
+    }
+
+    getContent(){
+        return this.content;
     }
 
 

@@ -71,16 +71,19 @@ io.on('connection', (socket) => {
 
     socket.on('connectPseudo', function(pseudo){
         saveCl.setPseudo(pseudo);
+
+        // On récupère le contenu du json
         fs.readFile('save.json', 'utf8', function(err, data) {
             let content = data;
             content = JSON.parse(content);
+            saveCl.setContent(content);
             
             // On cherche si le pseudo a déjà une save
             for(let i=0;i<content.length;i++){
                 if(content[i].pseudo == pseudo){
                     // Si oui en enregistre sa save
                     saveCl.setTab(content[i].niveaux);
-                    console.log("La c'est charge : "+saveCl.getTab());
+                    //console.log("La c'est charge : "+saveCl.getTab());
                 }
             }
 
@@ -89,14 +92,47 @@ io.on('connection', (socket) => {
 
     socket.on('envoiMoiLeTab', function() {
         // On envoie le tableau au client
-        console.log("envoie Tab : "+saveCl.getTab());
+        //console.log("envoie Tab : "+saveCl.getTab());
         socket.emit('merci', (saveCl.getTab())); 
     });
 
     socket.on('tiensSave', (tab) => {
         saveCl.setTab(tab);
-        // sauvegarder dans json le nouveau tab au bon pseudo
-        console.log(tab);
+        let c = saveCl.getContent();
+        
+        console.log("TiensSave : "+saveCl.getTab());
+
+        let trouve = false;
+
+        //On cherche si le pseudo est dans la save
+        for(let i=0;i<c.length;i++){
+
+            if(c[i].pseudo == saveCl.getPseudo()){
+                // Si oui en enregistre sa save
+                c[i].niveaux = saveCl.getTab();
+
+                // On sauvegarde dans le fichier json
+                fs.writeFile("save.json", JSON.stringify(c), function (err) {
+                    if(err) throw err;
+                    console.log('File update');
+                });
+
+                trouve = true;
+            }
+        }
+
+        // Si c'est un nouveau joueur (sans save)
+        if(!trouve){
+            // On ajoute le joueur et sa save dans le content json
+            c.push({pseudo: saveCl.getPseudo(), niveaux: saveCl.getTab()});
+            
+            // On sauvegarde dans le fichier json
+            fs.writeFile("save.json", JSON.stringify(c), function (err) {
+                if(err) throw err;
+                console.log('File update');
+            });
+        }
+
     });
 
 });
