@@ -30,26 +30,6 @@ gltfLoader.load('globMap.gltf', (gltf) => {
 })
 
 
-//TESTS CARRES RAY
-const pointer = new THREE.Vector2();
-const raycaster = new THREE.Raycaster();
-const addNewBoxMesh = (x,y,z) =>{
-    const boxGeometry = new THREE.BoxGeometry(1,1,1);
-    const boxMaterial = new THREE.MeshPhongMaterial({color: 0xfafafa,});
-    const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
-    boxMesh.position.set(x,y,z);
-    scene.add(boxMesh);
-}
-
-for(let i = 0; i < 3; i++){
-    for(let y = 0; y < 3; y++){
-        for(let z = 0; z < 3; z++){
-            addNewBoxMesh(i*2,y*2+3,z*2);
-        }
-    }
-}
-//TESTS CARRE RAY
-
 // Lights
 
 const pointLight = new THREE.PointLight(0xffffff, 1)
@@ -123,6 +103,42 @@ const renderer = new THREE.WebGLRenderer({
 })
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
+//TESTS CARRES RAY
+const pointer = new THREE.Vector2();
+const raycaster = new THREE.Raycaster();
+
+const onMouseMove = (event) => {
+    pointer.x = (event.clientX / window.innerWidth)*2-1;
+    pointer.y = (event.clientY / window.innerHeight)*2+1;
+
+    raycaster.setFromCamera(pointer, camera);
+    const intersects = raycaster.intersectObjects(scene.children);
+
+    for(let i = 0; i < intersects.length; i++){
+        intersects[ i ].object.material.color.set( 0xff0000 );
+    }
+}
+
+const addNewBoxMesh = (x,y,z) =>{
+    const boxGeometry = new THREE.BoxGeometry(1,1,1);
+    const boxMaterial = new THREE.MeshPhongMaterial({color: 0xfafafa,});
+    const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
+    boxMesh.position.set(x,y,z);
+    scene.add(boxMesh);
+}
+
+for(let i = 0; i < 3; i++){
+    for(let y = 0; y < 3; y++){
+        for(let z = 0; z < 3; z++){
+            addNewBoxMesh(i*2,y*2+3,z*2);
+        }
+    }
+}
+
+window.addEventListener('MouseMove', onMouseMove);
+
+//TESTS CARRE RAY
 
 /**
  * Animate
