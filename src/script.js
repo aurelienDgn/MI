@@ -18,17 +18,20 @@ gltfLoader.load('globMap.gltf', (gltf) => {
     scene.add(gltf.scene)
 })
 //carrés de test
-const addNewBoxMesh = (x,y,z) =>{
+const addNewBoxMesh = (x,y,z,nb) =>{
     const boxGeometry = new THREE.BoxGeometry(1,1,1);
     const boxMaterial = new THREE.MeshPhongMaterial({color: 0xfafafa,});
     const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
     boxMesh.position.set(x,y,z);
+    boxMesh.userData.id = nb; //id /!\
     scene.add(boxMesh);
 }
+let nombre = 1;
 for(let i = 0; i < 3; i++){
     for(let y = 0; y < 3; y++){
         for(let z = 0; z < 3; z++){
-            addNewBoxMesh(i*2,y*2+3,z*2);
+            addNewBoxMesh(i*2,y*2+3,z*2,nombre);
+            nombre+=1;
         }
     }
 }
@@ -96,11 +99,12 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
-//Raycaster
+//Raycaster et addEventListeners
 const pointer = new THREE.Vector2();
 const raycaster = new THREE.Raycaster();
 var preums = 0;
-const onMouseMove = (event) => {
+
+const onMouseMove = (event) => { //utilisé pour le hover
     if(preums){
         preums.material.color.set( 0xfafafa );
     }
@@ -113,7 +117,23 @@ const onMouseMove = (event) => {
         preums = intersects[0].object;
     }
 }
+
+const onClick = (event) =>{ //utilisé pour le click (logique)
+    pointer.x = (event.clientX / window.innerWidth)*2-1;
+    pointer.y = -(event.clientY / window.innerHeight)*2+1;
+    raycaster.setFromCamera(pointer, camera);
+    const intersects = raycaster.intersectObjects(scene.children);
+    if(intersects[0].object.userData.id && intersects[0].object.userData.id == 9){//cond
+        //fonction(blabla)
+        console.log("ca marche");
+    }
+    else{
+        console.log(intersects[0].object.userData.id);
+    }
+}
+
 window.addEventListener('mousemove', onMouseMove);
+window.addEventListener('click', onClick); //click ou mouseup au choix
 
 //var selectedObject = scene.getObjectByName(gltf.scene);
 //scene.remove( selectedObject );
