@@ -10,7 +10,7 @@ const gui = new dat.GUI() //Petit tableau en haut pour ajouter des trucs
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl');
-
+ 
 // Scene
 const scene = new THREE.Scene();
 const scene2 = new THREE.Scene();
@@ -49,15 +49,15 @@ var element=document.getElementById("myBtn");
  * Sizes
  */
 const sizes = {
-    width: window.innerWidth,
-    height: window.innerHeight
+    width: 500,
+    height: 500
 }
 
 window.addEventListener('resize', () =>
 {
     // Update sizes
-    sizes.width = window.innerWidth
-    sizes.height = window.innerHeight
+    sizes.width = 500
+    sizes.height = 500
 
     // Update camera
     camera.aspect = sizes.width / sizes.height
@@ -156,11 +156,12 @@ loader.load('Desert.glb', function ( gltf2 ) {
  */
 
 const clock = new THREE.Clock()
+var chgscene = false;
 
 const tick = () =>
 {
 
-    const elapsedTime = clock.getElapsedTime()
+    //const elapsedTime = clock.getElapsedTime()
 
 
     // Update Orbital Controls
@@ -172,12 +173,25 @@ const tick = () =>
 
     // Render
     //renderer.autoClear=false;
-    renderer.autoClear=false;
-    renderer.render(scene, camera);
+    if(!chgscene){
+
+        renderer.autoClear=false;
+        renderer.render(scene, camera);
+    } else if(chgscene){
+        
+        renderer.clear();
+        renderer.render(scene2,camera);
+    }
 
     element.addEventListener("click", function() {
-    renderer.clear();
-    renderer.render(scene2,camera);})
+        if(chgscene){
+            chgscene = false;
+            console.log("vrai -> faux");
+        } else{
+            chgscene = true;
+            console.log("faux -> vrai");
+        }
+    });
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
