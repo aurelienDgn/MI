@@ -5,36 +5,36 @@ import * as dat from 'dat.gui'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { Camera, Scene } from 'three'
 
+//INIT
 const gltfLoader = new GLTFLoader()
-
-// Debug
-const gui = new dat.GUI()
-
-// Canvas
+//const gui = new dat.GUI()
 const canvas = document.querySelector('canvas.webgl')
-
-// Scene
 const scene = new THREE.Scene()
 
-
-//Map
+//map
 gltfLoader.load('globMap.gltf', (gltf) => {
     gltf.scene.scale.set(1,1,1)
     gltf.scene.rotation.set(0,0,0)
     scene.add(gltf.scene)
-
-    //gui add (tests)
-    gui.add(gltf.scene.position, 'x').min(0).max(9)
-    gui.add(gltf.scene.position, 'y').min(0).max(9)
-    gui.add(gltf.scene.position, 'z').min(0).max(9)
 })
-
-
-// Lights
-
+//carrés de test
+const addNewBoxMesh = (x,y,z) =>{
+    const boxGeometry = new THREE.BoxGeometry(1,1,1);
+    const boxMaterial = new THREE.MeshPhongMaterial({color: 0xfafafa,});
+    const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
+    boxMesh.position.set(x,y,z);
+    scene.add(boxMesh);
+}
+for(let i = 0; i < 3; i++){
+    for(let y = 0; y < 3; y++){
+        for(let z = 0; z < 3; z++){
+            addNewBoxMesh(i*2,y*2+3,z*2);
+        }
+    }
+}
 const pointLight = new THREE.PointLight(0xffffff, 1)
-pointLight.position.x = 0
-pointLight.position.y = 10
+pointLight.position.x = 0 
+pointLight.position.y = 10 
 pointLight.position.z = 0
 const pointLight2 = new THREE.PointLight(0xffffff, 1)
 pointLight2.position.x = 4
@@ -47,9 +47,8 @@ pointLight3.position.z = -4
 scene.add(pointLight)
 scene.add(pointLight2)
 scene.add(pointLight3)
-
-const ambLight = new THREE.AmbientLight(0xffffff, 3); // soft white light
-scene.add( ambLight );
+const ambLight = new THREE.AmbientLight(0xffffff, 3) // soft white light
+scene.add( ambLight )
 
 /**
  * Sizes
@@ -59,16 +58,13 @@ const sizes = {
     height: window.innerHeight
 }
 
-window.addEventListener('resize', () =>
-{
+window.addEventListener('resize', () =>{
     // Update sizes
     sizes.width = window.innerWidth
     sizes.height = window.innerHeight
-
     // Update camera
     camera.aspect = sizes.width / sizes.height
     camera.updateProjectionMatrix()
-
     // Update renderer
     renderer.setSize(sizes.width, sizes.height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
@@ -86,10 +82,6 @@ camera.rotation.x = -0.5
 camera.rotation.y = 0
 camera.rotation.z = 0
 scene.add(camera)
-gui.add(camera.rotation, 'x').min(0).max(9)
-gui.add(camera.rotation, 'y').min(0).max(9)
-gui.add(camera.rotation, 'z').min(0).max(9)
-
 // Controls
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
@@ -104,59 +96,36 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
-//TESTS CARRES RAY
+//Raycaster
 const pointer = new THREE.Vector2();
 const raycaster = new THREE.Raycaster();
 
 const onMouseMove = (event) => {
+    console.log('test')
     pointer.x = (event.clientX / window.innerWidth)*2-1;
-    pointer.y = (event.clientY / window.innerHeight)*2+1;
-
+    pointer.y = -(event.clientY / window.innerHeight)*2+1;
     raycaster.setFromCamera(pointer, camera);
     const intersects = raycaster.intersectObjects(scene.children);
-
     for(let i = 0; i < intersects.length; i++){
         intersects[ i ].object.material.color.set( 0xff0000 );
     }
 }
+window.addEventListener('mousemove', onMouseMove);
 
-const addNewBoxMesh = (x,y,z) =>{
-    const boxGeometry = new THREE.BoxGeometry(1,1,1);
-    const boxMaterial = new THREE.MeshPhongMaterial({color: 0xfafafa,});
-    const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
-    boxMesh.position.set(x,y,z);
-    scene.add(boxMesh);
-}
-
-for(let i = 0; i < 3; i++){
-    for(let y = 0; y < 3; y++){
-        for(let z = 0; z < 3; z++){
-            addNewBoxMesh(i*2,y*2+3,z*2);
-        }
-    }
-}
-
-window.addEventListener('MouseMove', onMouseMove);
-
-//TESTS CARRE RAY
-
+//var selectedObject = scene.getObjectByName(gltf.scene);
+//scene.remove( selectedObject );
+//animate();
 /**
  * Animate
  */
 
 const clock = new THREE.Clock()
-
-const tick = () =>
-{
-
+const tick = () =>{
     const elapsedTime = clock.getElapsedTime()
-
     // Update Orbital Controls
     controls.update()
-
     // Render
     renderer.render(scene, camera)
-
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
 }
