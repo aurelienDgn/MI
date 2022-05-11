@@ -99,15 +99,18 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 //Raycaster
 const pointer = new THREE.Vector2();
 const raycaster = new THREE.Raycaster();
-
+var preums = 0;
 const onMouseMove = (event) => {
-    console.log('test')
+    if(preums){
+        preums.material.color.set( 0xfafafa );
+    }
     pointer.x = (event.clientX / window.innerWidth)*2-1;
     pointer.y = -(event.clientY / window.innerHeight)*2+1;
     raycaster.setFromCamera(pointer, camera);
     const intersects = raycaster.intersectObjects(scene.children);
-    for(let i = 0; i < intersects.length; i++){
-        intersects[ i ].object.material.color.set( 0xff0000 );
+    if(intersects.length > 0){
+        intersects[0].object.material.color.set( 0xff0000 );
+        preums = intersects[0].object;
     }
 }
 window.addEventListener('mousemove', onMouseMove);
@@ -122,10 +125,8 @@ window.addEventListener('mousemove', onMouseMove);
 const clock = new THREE.Clock()
 const tick = () =>{
     const elapsedTime = clock.getElapsedTime()
-    // Update Orbital Controls
-    controls.update()
-    // Render
-    renderer.render(scene, camera)
+    controls.update()// Update Orbital Controls
+    renderer.render(scene, camera)// Render
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
 }
