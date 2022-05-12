@@ -183,18 +183,27 @@ const tick = () =>
         renderer.render(scene2,camera);
     }
 
-    element.addEventListener("click", function() {
-        if(chgscene){
-            chgscene = false;
-            console.log("vrai -> faux");
-        } else{
-            chgscene = true;
-            console.log("faux -> vrai");
-        }
-    });
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
 }
 
-tick()
+tick();
+
+element.addEventListener("click", function() {
+    if(chgscene){
+        chgscene = false;
+        console.log("vrai -> faux");
+    } else{
+        chgscene = true;
+        console.log("faux -> vrai");
+    }
+});
+
+
+
+
+
+
+
+
