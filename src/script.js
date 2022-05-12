@@ -10,58 +10,11 @@ const gltfLoader = new GLTFLoader()
 //const gui = new dat.GUI()
 const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
-
-//map
-gltfLoader.load('globMap.gltf', (gltf) => {
-    gltf.scene.scale.set(1,1,1)
-    gltf.scene.rotation.set(0,0,0)
-    scene.add(gltf.scene)
-})
-//carrés de test
-const addNewBoxMesh = (x,y,z,nb) =>{
-    const boxGeometry = new THREE.BoxGeometry(1,1,1);
-    const boxMaterial = new THREE.MeshPhongMaterial({color: 0xfafafa,});
-    const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
-    boxMesh.position.set(x,y,z);
-    boxMesh.userData.id = nb; //id /!\
-    scene.add(boxMesh);
-}
-let nombre = 1;
-for(let i = 0; i < 3; i++){
-    for(let y = 0; y < 3; y++){
-        for(let z = 0; z < 3; z++){
-            addNewBoxMesh(i*2,y*2+3,z*2,nombre);
-            nombre+=1;
-        }
-    }
-}
-const pointLight = new THREE.PointLight(0xffffff, 1)
-pointLight.position.x = 0 
-pointLight.position.y = 10 
-pointLight.position.z = 0
-const pointLight2 = new THREE.PointLight(0xffffff, 1)
-pointLight2.position.x = 4
-pointLight2.position.y = 10
-pointLight2.position.z = 4
-const pointLight3 = new THREE.PointLight(0xffffff, 1)
-pointLight3.position.x = -4
-pointLight3.position.y = 10
-pointLight3.position.z = -4
-scene.add(pointLight)
-scene.add(pointLight2)
-scene.add(pointLight3)
-const ambLight = new THREE.AmbientLight(0xffffff, 3) // soft white light
-scene.add( ambLight )
-
-/**
- * Sizes
- */
 const sizes = {
     width: window.innerWidth,
     height: window.innerHeight
 }
-
-window.addEventListener('resize', () =>{
+window.addEventListener('resize', () => {
     // Update sizes
     sizes.width = window.innerWidth
     sizes.height = window.innerHeight
@@ -72,22 +25,26 @@ window.addEventListener('resize', () =>{
     renderer.setSize(sizes.width, sizes.height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 })
-
-/**
- * Camera
- */
-// Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 camera.position.x = 0
-camera.position.y = 10
-camera.position.z = 10
-camera.rotation.x = -0.5
+camera.position.y = 0
+camera.position.z = 0
+camera.rotation.x = 0
 camera.rotation.y = 0
 camera.rotation.z = 0
 scene.add(camera)
-// Controls
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
+const addNewBoxMesh = (x, y, z, nb) => { //modele balise niveau placable
+    const boxGeometry = new THREE.SphereGeometry(0.5, 32, 16);
+    const boxMaterial = new THREE.MeshPhongMaterial({ color: 0xfafafa, });
+    const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
+    boxMesh.position.set(x, y, z);
+    boxMesh.userData.id = nb; //id /!\
+    scene.add(boxMesh);
+}
+
+loadMapGlob();
 
 /**
  * Renderer
@@ -105,30 +62,33 @@ const raycaster = new THREE.Raycaster();
 var preums = 0;
 
 const onMouseMove = (event) => { //utilisé pour le hover
-    if(preums){
-        preums.material.color.set( 0xfafafa );
+    if (preums) {
+        preums.material.color.set(0xfafafa);
     }
-    pointer.x = (event.clientX / window.innerWidth)*2-1;
-    pointer.y = -(event.clientY / window.innerHeight)*2+1;
+    pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+    pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
     raycaster.setFromCamera(pointer, camera);
     const intersects = raycaster.intersectObjects(scene.children);
-    if(intersects.length > 0){
-        intersects[0].object.material.color.set( 0xff0000 );
+    if (intersects.length > 0) {
+        intersects[0].object.material.color.set(0xff0000);
         preums = intersects[0].object;
     }
 }
 
-const onClick = (event) =>{ //utilisé pour le click (logique)
-    pointer.x = (event.clientX / window.innerWidth)*2-1;
-    pointer.y = -(event.clientY / window.innerHeight)*2+1;
+const onClick = (event) => { //utilisé pour le click (logique)
+    pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+    pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
     raycaster.setFromCamera(pointer, camera);
     const intersects = raycaster.intersectObjects(scene.children);
-    if(intersects[0].object.userData.id && intersects[0].object.userData.id == 9){//cond
+    if (intersects[0].object.userData.id && intersects[0].object.userData.id == 9) {//cond
         //fonction(blabla)
         console.log("ca marche");
     }
-    else{
+    else if (intersects[0].object.userData.id != undefined) {
         console.log(intersects[0].object.userData.id);
+    }
+    else {//marche pas
+        console.log("tdc")
     }
 }
 
@@ -143,7 +103,7 @@ window.addEventListener('click', onClick); //click ou mouseup au choix
  */
 
 const clock = new THREE.Clock()
-const tick = () =>{
+const tick = () => {
     const elapsedTime = clock.getElapsedTime()
     controls.update()// Update Orbital Controls
     renderer.render(scene, camera)// Render
@@ -152,3 +112,45 @@ const tick = () =>{
 }
 
 tick()
+
+function loadMapGlob(){
+    camera.position.x = 0
+    camera.position.y = 10
+    camera.position.z = 10
+    camera.rotation.x = -0.5
+    camera.rotation.y = 0
+    camera.rotation.z = 0
+    gltfLoader.load('globMap.gltf', (gltf) => { //load map globale
+        gltf.scene.scale.set(1, 1, 1)
+        gltf.scene.rotation.set(0, 0, 0)
+        scene.add(gltf.scene)
+    })
+    genBalisesGlob();
+    genLightGlob();
+}
+
+function genBalisesGlob() { //gen balises
+    let nombre = 1;
+    addNewBoxMesh(0, -0.3, 0, nombre);
+    nombre += 1;
+}
+
+function genLightGlob() { //gen light glob
+    const pointLight = new THREE.PointLight(0xffffff, 1)
+    pointLight.position.x = 0
+    pointLight.position.y = 10
+    pointLight.position.z = 0
+    const pointLight2 = new THREE.PointLight(0xffffff, 1)
+    pointLight2.position.x = 4
+    pointLight2.position.y = 10
+    pointLight2.position.z = 4
+    const pointLight3 = new THREE.PointLight(0xffffff, 1)
+    pointLight3.position.x = -4
+    pointLight3.position.y = 10
+    pointLight3.position.z = -4
+    scene.add(pointLight)
+    scene.add(pointLight2)
+    scene.add(pointLight3)
+    const ambLight = new THREE.AmbientLight(0xffffff, 3) // soft white light
+    scene.add(ambLight)
+}
