@@ -56,48 +56,7 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
-//Raycaster et addEventListeners
-const pointer = new THREE.Vector2();
-const raycaster = new THREE.Raycaster();
-var preums = 0;
 
-const onMouseMove = (event) => { //utilisé pour le hover
-    if (preums) {
-        preums.material.color.set(0xfafafa);
-    }
-    pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
-    pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
-    raycaster.setFromCamera(pointer, camera);
-    const intersects = raycaster.intersectObjects(scene.children);
-    if (intersects.length > 0) {
-        intersects[0].object.material.color.set(0xff0000);
-        preums = intersects[0].object;
-    }
-}
-
-const onClick = (event) => { //utilisé pour le click (logique)
-    pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
-    pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
-    raycaster.setFromCamera(pointer, camera);
-    const intersects = raycaster.intersectObjects(scene.children);
-    if (intersects[0].object.userData.id && intersects[0].object.userData.id == 9) {//cond
-        //fonction(blabla)
-        console.log("ca marche");
-    }
-    else if (intersects[0].object.userData.id != undefined) {
-        console.log(intersects[0].object.userData.id);
-    }
-    else {//marche pas
-        console.log("tdc")
-    }
-}
-
-window.addEventListener('mousemove', onMouseMove);
-window.addEventListener('click', onClick); //click ou mouseup au choix
-
-//var selectedObject = scene.getObjectByName(gltf.scene);
-//scene.remove( selectedObject );
-//animate();
 /**
  * Animate
  */
@@ -125,14 +84,20 @@ function loadMapGlob(){
         gltf.scene.rotation.set(0, 0, 0)
         scene.add(gltf.scene)
     })
+    raysGlobal();
     genBalisesGlob();
     genLightGlob();
 }
 
 function genBalisesGlob() { //gen balises
-    let nombre = 1;
-    addNewBoxMesh(0, -0.3, 0, nombre);
-    nombre += 1;
+    addNewBoxMesh(7, -0.3, 0.9, 1);
+    addNewBoxMesh(4.2, -0.3, 0, 2);
+    addNewBoxMesh(1.4, -0.3, 1, 3);
+    addNewBoxMesh(-0.7, -0.3, 2.8, 4);
+    addNewBoxMesh(-4.5, -0.3, 2.8, 5);
+    addNewBoxMesh(-7.5, -0.3, 2.1, 6);
+    addNewBoxMesh(-10, -0.3, -0.3, 7);
+    addNewBoxMesh(-11.2, -0.24, -3, 8);
 }
 
 function genLightGlob() { //gen light glob
@@ -153,4 +118,44 @@ function genLightGlob() { //gen light glob
     scene.add(pointLight3)
     const ambLight = new THREE.AmbientLight(0xffffff, 3) // soft white light
     scene.add(ambLight)
+}
+
+function raysGlobal(){ //Raycaster et addEventListeners
+    const pointer = new THREE.Vector2();
+    const raycaster = new THREE.Raycaster();
+    var preums = 0;
+    
+    const onMouseMove = (event) => { //utilisé pour le hover
+        if (preums) {
+            preums.material.color.set(0xfafafa);
+        }
+        pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+        pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        raycaster.setFromCamera(pointer, camera);
+        const intersects = raycaster.intersectObjects(scene.children);
+        if (intersects.length > 0) {
+            intersects[0].object.material.color.set(0xff0000);
+            preums = intersects[0].object;
+        }
+    }
+    
+    const onClick = (event) => { //utilisé pour le click (logique)
+        pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+        pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        raycaster.setFromCamera(pointer, camera);
+        const intersects = raycaster.intersectObjects(scene.children);
+        if (intersects[0].object.userData.id && intersects[0].object.userData.id == 9) {//cond
+            //fonction(blabla)
+            console.log("ca marche");
+        }
+        else if (intersects[0].object.userData.id != undefined) {
+            console.log(intersects[0].object.userData.id);
+        }
+        else {//marche pas
+            console.log("tdc")
+        }
+    }
+    
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('click', onClick); //click ou mouseup au choix
 }
