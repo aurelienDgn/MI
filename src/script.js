@@ -159,3 +159,13 @@ function raysGlobal(){ //Raycaster et addEventListeners
     window.addEventListener('mousemove', onMouseMove);
     window.addEventListener('click', onClick); //click ou mouseup au choix
 }
+
+function loadMapGame(){
+    camera.position.x = 11; //Position de la caméra
+    camera.position.y = 3;
+    camera.position.z = 0;                             //Pour la caméra qui va transitionner on commence pas à 0
+    camera.lookAt(-10,-25,0); //Là où elle regarde (donc ici le centre)         //Pareil sinon ça regarde pas en 0,0
+    //Comme elle est en hauteur elle regarde vers le bas
+    renderer.gammaOutput = true;
+}
+
