@@ -4,6 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'dat.gui'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { Camera, Scene } from 'three'
+import gsap from 'gsap'
 
 //INIT
 const gltfLoader = new GLTFLoader()
@@ -35,14 +36,27 @@ camera.rotation.z = 0
 scene.add(camera)
 const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
+const colorWh = 0xfafafa;
+const colorRd = 0xff0000; 
+const colorValid = 0x16AAE1;
 const addNewBoxMesh = (x, y, z, nb) => { //modele balise niveau placable
     const boxGeometry = new THREE.SphereGeometry(0.5, 32, 16);
-    const boxMaterial = new THREE.MeshPhongMaterial({ color: 0xfafafa, });
+    let boxMaterial;
+    if(nb > nbNivFini){
+        boxMaterial = new THREE.MeshPhongMaterial({ color: colorWh, });
+    }
+    else{
+        boxMaterial = new THREE.MeshPhongMaterial({ color: colorValid, });
+    }
     const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
     boxMesh.position.set(x, y, z);
     boxMesh.userData.id = nb; //id /!\
     scene.add(boxMesh);
 }
+
+//game variables
+let whScene = 0; //0 map gl | 1-x num jeu
+let nbNivFini = 3; //nb de niveaux déjà fait
 
 loadMapGlob();
 
@@ -72,7 +86,13 @@ const tick = () => {
 
 tick()
 
-function loadMapGlob(){
+function removeEver() {
+    while (scene.children.length) {
+        scene.remove(scene.children[0]);
+    }
+}
+
+function loadMapGlob() {
     camera.position.x = 0
     camera.position.y = 10
     camera.position.z = 10
@@ -120,25 +140,30 @@ function genLightGlob() { //gen light glob
     scene.add(ambLight)
 }
 
-function raysGlobal(){ //Raycaster et addEventListeners
+function raysGlobal() { //Raycaster et addEventListeners
     const pointer = new THREE.Vector2();
     const raycaster = new THREE.Raycaster();
     var preums = 0;
-    
+
     const onMouseMove = (event) => { //utilisé pour le hover
         if (preums) {
-            preums.material.color.set(0xfafafa);
+            if(preums.userData.id > nbNivFini){
+                preums.material.color.set(colorWh);
+            }
+            else{
+                preums.material.color.set(colorValid);
+            }
         }
         pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
         pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
         raycaster.setFromCamera(pointer, camera);
         const intersects = raycaster.intersectObjects(scene.children);
         if (intersects.length > 0) {
-            intersects[0].object.material.color.set(0xff0000);
+            intersects[0].object.material.color.set(colorRd);
             preums = intersects[0].object;
         }
     }
-    
+
     const onClick = (event) => { //utilisé pour le click (logique)
         pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
         pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -149,23 +174,53 @@ function raysGlobal(){ //Raycaster et addEventListeners
             console.log("ca marche");
         }
         else if (intersects[0].object.userData.id != undefined) {
-            console.log(intersects[0].object.userData.id);
+            removeEver();
+            loadMapGame();
         }
         else {//marche pas
-            console.log("tdc")
+            console.log("error onClick");
         }
     }
-    
+
     window.addEventListener('mousemove', onMouseMove);
     window.addEventListener('click', onClick); //click ou mouseup au choix
 }
 
-function loadMapGame(){
+function loadMapGame() {
     camera.position.x = 11; //Position de la caméra
     camera.position.y = 3;
     camera.position.z = 0;                             //Pour la caméra qui va transitionner on commence pas à 0
-    camera.lookAt(-10,-25,0); //Là où elle regarde (donc ici le centre)         //Pareil sinon ça regarde pas en 0,0
+    camera.lookAt(-10, -25, 0); //Là où elle regarde (donc ici le centre)         //Pareil sinon ça regarde pas en 0,0
     //Comme elle est en hauteur elle regarde vers le bas
     renderer.gammaOutput = true;
+    const pointLight = new THREE.PointLight(0xffffff, 3); //Lumière statique du dessus pour éclairer les polygones
+    pointLight.position.x = 0;
+    pointLight.position.y = 0.2;
+    pointLight.position.z = 0;
+    const pointLight2 = new THREE.PointLight(0xffffff, 1); //Pareil de côté
+    pointLight2.position.x = 10;
+    pointLight2.position.y = 0.3;
+    pointLight2.position.z = -10;
+    const pointLight3 = new THREE.PointLight(0xffffff, 2); //Pareil
+    pointLight3.position.x = 0;
+    pointLight3.position.y = 0;
+    pointLight3.position.z = 2;
+    scene.add(pointLight);
+    scene.add(pointLight2);
+    scene.add(pointLight3);
+    camera.position.x = 11; //Position de la caméra
+    camera.position.y = 3;
+    camera.position.z = 0;                             //Pour la caméra qui va transitionner on commence pas à 0
+    camera.lookAt(-10, -25, 0);
+    let tl=gsap.timeline(); //sert à l'animation
+    gltfLoader.load('firstterrain_principled.glb', function (gltf) { //Le modèle du sol ,vient de blender
+        //gltf.scene.scale.set(0.5, 0.5, 0.5);
+        gltf.scene.rotation.y = 4.7;
+        scene.add(gltf.scene); //Première fois qu'on load la scène, elle apparait donc dès le début
+        /**
+         * Animation de départ (compris dans le loader)
+         */
+        tl.to(camera.position, { x: 10, y: 8, ease: "none", duration: 2 });
+    });
 }
 
