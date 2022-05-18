@@ -47,6 +47,8 @@ const addNewBoxMesh = (x, y, z, nb) => { //modele balise niveau placable
     }
     else if(nb > nbNivFini){
         boxMaterial = new THREE.MeshPhongMaterial({ color: colorRd, });
+        boxMaterial.transparent = flase;
+        boxMaterial.opacity = 1;
     }
     else{
         boxMaterial = new THREE.MeshPhongMaterial({ color: colorValid, });
