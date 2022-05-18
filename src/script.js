@@ -42,8 +42,11 @@ const colorValid = 0x16AAE1;
 const addNewBoxMesh = (x, y, z, nb) => { //modele balise niveau placable
     const boxGeometry = new THREE.SphereGeometry(0.5, 32, 16);
     let boxMaterial;
-    if(nb > nbNivFini){
+    if(nb == nbNivFini){
         boxMaterial = new THREE.MeshPhongMaterial({ color: colorWh, });
+    }
+    else if(nb > nbNivFini){
+        boxMaterial = new THREE.MeshPhongMaterial({ color: colorRd, });
     }
     else{
         boxMaterial = new THREE.MeshPhongMaterial({ color: colorValid, });
@@ -147,8 +150,11 @@ function raysGlobal() { //Raycaster et addEventListeners
 
     const onMouseMove = (event) => { //utilisé pour le hover
         if (preums) {
-            if(preums.userData.id > nbNivFini){
+            if(preums.userData.id == nbNivFini){
                 preums.material.color.set(colorWh);
+            }
+            else if(preums.userData.id > nbNivFini){
+                preums.material.color.set(colorRd);
             }
             else{
                 preums.material.color.set(colorValid);
@@ -169,16 +175,15 @@ function raysGlobal() { //Raycaster et addEventListeners
         pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
         raycaster.setFromCamera(pointer, camera);
         const intersects = raycaster.intersectObjects(scene.children);
-        if (intersects[0].object.userData.id && intersects[0].object.userData.id == 9) {//cond
-            //fonction(blabla)
-            console.log("ca marche");
-        }
-        else if (intersects[0].object.userData.id != undefined) {
+        if (intersects[0].object.userData.id != undefined && intersects[0].object.userData.id <= nbNivFini) {
             whScene = intersects[0].object.userData.id;
             removeEver();
             loadMapGame();
         }
-        else {//marche pas
+        else if(intersects[0].object.userData.id > nbNivFini){//marche pas
+            console.log("niveau bloqué");
+        }
+        else{
             console.log("error onClick");
         }
     }
