@@ -174,6 +174,7 @@ function raysGlobal() { //Raycaster et addEventListeners
             console.log("ca marche");
         }
         else if (intersects[0].object.userData.id != undefined) {
+            whScene = intersects[0].object.userData.id;
             removeEver();
             loadMapGame();
         }
@@ -224,3 +225,6 @@ function loadMapGame() {
     });
 }
 
+function finDeGame(){ //ce qui est fait quand on finit un niveau (gg)
+    nbNivFini = whScene;
+}
