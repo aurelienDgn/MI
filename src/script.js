@@ -47,7 +47,7 @@ const addNewBoxMesh = (x, y, z, nb) => { //modele balise niveau placable
     }
     else if(nb > nbNivFini){
         boxMaterial = new THREE.MeshPhongMaterial({ color: colorRd, });
-        boxMaterial.transparent = flase;
+        boxMaterial.transparent = false;
         boxMaterial.opacity = 1;
     }
     else{
@@ -177,16 +177,28 @@ function raysGlobal() { //Raycaster et addEventListeners
         pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
         raycaster.setFromCamera(pointer, camera);
         const intersects = raycaster.intersectObjects(scene.children);
-        if (intersects[0].object.userData.id != undefined && intersects[0].object.userData.id <= nbNivFini) {
-            whScene = intersects[0].object.userData.id;
-            removeEver();
-            loadMapGame();
+        if(whScene == 0){//map glob
+            if (intersects[0].object.userData.id != undefined && intersects[0].object.userData.id <= nbNivFini) {
+                whScene = intersects[0].object.userData.id;
+                removeEver();
+                loadMapGame();
+            }
+            else if(intersects[0].object.userData.id > nbNivFini){//marche pas
+                console.log("niveau bloqué");
+            }
+            else{
+                console.log("error onClick");
+            }
         }
-        else if(intersects[0].object.userData.id > nbNivFini){//marche pas
-            console.log("niveau bloqué");
-        }
-        else{
-            console.log("error onClick");
+        else{//map game
+            if(intersects[0].object.material.transparent == true && intersects[0].object.material.opacity == 0.3 && intersects[0].object.userData.id== 10){
+                intersects[0].object.material.transparent = true;
+                intersects[0].object.material.opacity = 1;
+            }
+            else{
+                intersects[0].object.material.transparent = true;
+                intersects[0].object.material.opacity = 0.3;
+            }
         }
     }
 
