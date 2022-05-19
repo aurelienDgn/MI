@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'dat.gui'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
-import { Camera, Scene } from 'three'
+import { Camera, RepeatWrapping, Scene } from 'three'
 import gsap from 'gsap'
 
 //INIT
@@ -206,9 +206,14 @@ function loadMapGame() {
     pointLight3.position.x = 0;
     pointLight3.position.y = 0;
     pointLight3.position.z = 2;
+    const pointLightMaison = new THREE.PointLight(0xffffff, 2); //Pareil
+    pointLightMaison.position.set(-4,0.7,2.8);
     scene.add(pointLight);
     scene.add(pointLight2);
     scene.add(pointLight3);
+    scene.add(pointLightMaison);
+    loadFirst(); // Affiche la maison par défaut
+    barreElt(); // Affiche la barre d'éléments
     camera.position.x = 11; //Position de la caméra
     camera.position.y = 3;
     camera.position.z = 0;                             //Pour la caméra qui va transitionner on commence pas à 0
@@ -227,4 +232,427 @@ function loadMapGame() {
 
 function finDeGame(){ //ce qui est fait quand on finit un niveau (gg)
     nbNivFini = whScene;
+}
+
+
+function loadFirst(){
+
+var textureLoader = new THREE.TextureLoader();
+var texture = textureLoader.load("textures/brick.jpg");
+texture.encoding = THREE.sRGBEncoding;
+texture.flipY = false;
+texture.wrapS = texture.wrapT = THREE.RepeatWrapping
+texture.offset.x = 0;
+texture.offset.y = 0;
+texture.repeat.set(2,2);
+
+var mat;
+var model;
+var mixer = null;
+var geo;
+
+// Positionne les murs
+
+gltfLoader.load('house.glb', function ( gltf2 ) {
+    
+    gltf2.scene.name = "house";
+    model = gltf2.scene;
+   /* gltf2.scene.traverse(function (obj){
+        if((obj instanceof THREE.Mesh)){
+            mat = obj.material;
+            geo = obj.geometry;
+            mat.map = texture;
+        }
+    });*/
+
+
+    model.position.set(-4,0.4,2.8);
+    model.scale.set(0.5,0.5,0.5);
+
+    scene.add(model);
+
+    //mixer = new THREE.AnimationMixer(model);
+    //mixer.clipAction(gltf2.animations[4]).play();
+});
+
+
+var f = new THREE.TextureLoader();
+var d = f.load("textures/parpaing.jpg");
+d.encoding = THREE.sRGBEncoding;
+d.flipY = false;
+d.wrapS = d.wrapT = THREE.RepeatWrapping
+d.offset.x = 0;
+d.offset.y = 0;
+d.repeat.set(2,2);
+
+var mat1;
+var model1;
+var mixer1 = null;
+var geo1;
+
+gltfLoader.load('floor.glb', function ( gltf2 ) {
+    
+    gltf2.scene.name = "floor";
+    model1 = gltf2.scene;
+    /*gltf2.scene.traverse(function (obj){
+        if((obj instanceof THREE.Mesh)){
+            mat1 = obj.material;
+            geo1 = obj.geometry;
+            mat1.map = d;
+        }
+    });*/
+
+
+    gltf2.scene.position.set(-4,0.4,2.8);
+    gltf2.scene.scale.set(0.5,0.5,0.5);
+
+    scene.add(model1);
+
+    //mixer1 = new THREE.AnimationMixer(model1);
+    //mixer1.clipAction(gltf2.animations[4]).play();
+});
+
+
+gltfLoader.load('isolant.glb', function ( gltf2 ) {
+    
+    /*gltf2.scene.name = "pp";
+    model1 = gltf2.scene;
+    gltf2.scene.traverse(function (obj){
+        if((obj instanceof THREE.Mesh)){
+            mat1 = obj.material;
+            geo1 = obj.geometry;
+            mat1.map = d;
+        }
+    });*/
+
+
+    gltf2.scene.name = "isolant";
+
+    gltf2.scene.position.set(-3.98,0.4,2.78);
+    gltf2.scene.scale.set(0.48,0.48,0.48);
+
+    /*let uv = geo1.getAttribute('uv');
+    uv.array[0] = 1;*/
+
+    scene.add(gltf2.scene);
+
+    /*mixer1 = new THREE.AnimationMixer(model1);
+    mixer1.clipAction(gltf2.animations[4]).play();*/
+});
+
+
+gltfLoader.load('ceiling.glb', function ( gltf2 ) {
+    
+    /*gltf2.scene.name = "pp";
+    model1 = gltf2.scene;
+    gltf2.scene.traverse(function (obj){
+        if((obj instanceof THREE.Mesh)){
+            mat1 = obj.material;
+            geo1 = obj.geometry;
+            mat1.map = d;
+        }
+    });*/
+
+    gltf2.scene.name = "ceiling";
+
+    gltf2.scene.position.set(-3.45,0.7,2.5);
+    gltf2.scene.scale.set(0.4,0.4,0.4);
+
+    /*let uv = geo1.getAttribute('uv');
+    uv.array[0] = 1;*/
+
+    scene.add(gltf2.scene);
+
+    /*mixer1 = new THREE.AnimationMixer(model1);
+    mixer1.clipAction(gltf2.animations[4]).play();*/
+});
+}
+
+function reloadobject(elt, txture){
+
+    let i = scene.getObjectByName(elt);
+    console.log(i);
+    scene.remove(i);
+
+
+    var textureLoader = new THREE.TextureLoader();
+    var texture = textureLoader.load("textures/"+txture+".jpg");
+    texture.encoding = THREE.sRGBEncoding;
+    texture.flipY = false;
+    texture.offset.x = 0;
+    texture.offset.y = 0;
+
+    var mat;
+    var model;
+    var mixer = null;
+    var geo;
+
+    const loader = new GLTFLoader();
+
+    loader.load(elt+'.glb', function ( gltf2 ) {
+
+        model = gltf2.scene;
+        gltf2.scene.traverse(function (obj){
+            if((obj instanceof THREE.Mesh)){
+                mat = obj.material;
+                geo = obj.geometry;
+                mat.map = texture;
+            }
+        });
+
+        switch(elt){
+            case "house":
+                model.position.set(-4,0.4,2.8);
+                model.scale.set(0.5,0.5,0.5);
+                break;
+            case "floor":
+                gltf2.scene.position.set(-4,0.4,2.8);
+                gltf2.scene.scale.set(0.5,0.5,0.5);
+                break;
+            case "isolant":
+                gltf2.scene.position.set(-3.98,0.4,2.78);
+                gltf2.scene.scale.set(0.48,0.48,0.48);
+                break;
+            case "ceiling":
+                gltf2.scene.position.set(-3.45,0.7,2.5);
+                gltf2.scene.scale.set(0.4,0.4,0.4);
+                break;
+
+        }
+
+        scene.add(model);
+
+        mixer = new THREE.AnimationMixer(model);
+        mixer.clipAction(gltf2.animations[4]).play();
+    });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Initialisation de la barre
+
+// Il faudra récupérer un json avec la liste des éléments
+
+// le tableau sera récup de le json a terme
+
+let tabElt = ["Murs", "Toit", "Sol", "Chauffage"];
+let imgElt = ["Image/walls.png", "Image/toit.png", "Image/floor.png", "Image/door.png"];
+
+// Tableaux des éléments à modifier
+let tabMatMurs = ["Retour","Parpaing", "Briques", "Bloc coffrant", "Béton cellulaire"];
+let tabMatToit = ["Retour","Tuiles", "Ardoise", "Métal", "Zinc"];
+let tabMatSol = ["Retour","Bois massif", "Bois laminé", "Moquette","Vinyle","Carrelage"];
+let tabMatChauff = ["Retour","Electricité", "Gaz", "Bois", "Solaire"];
+
+// Tableaux des images des matériaux des différents éléments
+let imgMatMurs = ["Image/croix.png","Image/mat/parpaing.jpg", "Image/mat/brick.jpg", "Image/mat/bloc coffrant.jpg", "Image/mat/bloc cellulaire.jpg"];
+let imgMatSol = ["Image/croix.png","Image/mat/bois massif.jpg", "Image/mat/bois laminé.jpg", "Image/mat/moquette.jpg","Image/mat/vinyle.jpg", "Image/mat/carrelage.jpg"];
+let imgMatToit = ["Image/croix.png","Image/wood.png", "Image/wood.png", "Image/wood.png"];
+let imgMatChauff = ["Image/croix.png","Image/wood.png", "Image/wood.png", "Image/wood.png"];
+
+let barre = document.getElementById("barre");
+
+
+function barreMat(mat){
+    // Fonction affichant les différents matériaux d'un élément de la maison que l'on peut modifier
+    while(barre.firstChild){
+        // On supprime tout les enfants de la div barre
+        barre.removeChild(barre.firstChild);
+    }
+
+    // En fonction de l'élément passer en paramètre on appelle la fonction correspondante qui va afficher les matériaux disponibles
+    switch (mat){
+        case "Murs":
+            matElt(tabMatMurs, imgMatMurs, "house");
+            break;
+        case "Toit":
+            matElt(tabMatToit, imgMatToit, "ceiling");
+            break;
+        case "Sol":
+            matElt(tabMatSol, imgMatSol, "floor");
+            break;
+        case "Chauffage":
+            matElt(tabMatChauff, imgMatChauff, "hot");
+            break;
+    }
+}
+
+function matElt(tabMat, imgTab, elt){
+    // Fonction qui affiche les matériaux dispo en fct de l'élément passé en param
+    
+    for(let i=0;i<tabMat.length;i++){
+        // Création des div 
+        let div = document.createElement("div");
+        div.id = "elt"+i;
+        div.className = "elt";
+    
+        // Création de l'image
+        let img = document.createElement("img");
+        img.src = imgTab[i];
+        img.className = "img";
+    
+        // Création du text
+        let p = document.createElement("h4");
+        p.className = "nameElt";
+        p.innerText = tabMat[i];
+    
+        // On ajoute texte et image à la div
+        div.appendChild(img);
+        div.appendChild(p);
+    
+        // Et la div à la barre
+        barre.appendChild(div);
+
+        div.addEventListener('click', function(){
+            // Sélectionne le matériaux cliqué avec l'elt
+            selecElt(elt, tabMat[i]);
+        });
+
+        // Lance une animation de fondu 
+        document.getElementById(div.id).animate([
+            { opacity: 0 },
+            { opacity: 1 }
+        ], {
+            duration: 1000
+        })
+
+        div.onmouseover = function(){
+            div.style.backgroundColor = "antiquewhite";
+        }
+
+        div.onmouseout = function(){
+            div.style.backgroundColor = "rgba(237, 140, 30, 0.1)";
+        }
+
+    }
+}
+
+function barreElt(){
+    // Créer les éléments que l'on pourra modifier
+
+    barre.style.visibility = "visible";
+
+    // On enlève ce que contient la barre (au cas ou ou non)
+    while(barre.firstChild){
+        barre.removeChild(barre.firstChild);
+    }  
+
+    for(let i=0;i<tabElt.length;i++){
+        // Création de la div
+        let div = document.createElement("div");
+        div.id = "elt"+i;
+        div.className = "elt";
+
+
+        div.addEventListener('click', function (){
+            // Lorsque l'on clique sur un élément ça appelle la fct qui montre les matériaux avec en parametre l'elt cliqué
+            barreMat(tabElt[i]);
+        });
+    
+        // Création de l'img
+        let img = document.createElement("img");
+        img.src = imgElt[i];
+        img.className = "img";
+    
+        // Création du texte
+        let p = document.createElement("h4");
+        p.className = "nameElt";
+        p.innerText = tabElt[i];
+    
+        // Ajoute tout ça dans la div
+        div.appendChild(img);
+        div.appendChild(p);
+    
+        barre.appendChild(div);
+
+        div.onmouseover = function(){
+            div.style.backgroundColor = "antiquewhite";
+        }
+
+        div.onmouseout = function(){
+            div.style.backgroundColor = "rgba(237, 140, 30, 0.1)";
+        }
+
+        
+        // Petite animation du pauvre
+        let k = document.getElementById(div.id);
+        k.animate([
+            { opacity: 0 },
+            { opacity: 1 }
+        ], {
+            duration: 1500
+        })
+       /* k.style.left = "30em";
+        k.style.position = "relative";
+
+        function delay(n){
+            return new Promise(function(resolve){
+                setTimeout(resolve,n*1000);
+            });
+        }
+
+        let ppp = 30;
+
+        async function myAsyncFunction(){
+            for(let i=0;i<60;i++){
+                console.log("haaa");
+                k.style.left = ppp+"em";
+                ppp -= 0.5;
+                await delay(0.01);
+
+            }
+        }
+
+        myAsyncFunction();   */
+    }
+}
+
+
+function selecElt(elt, mat){
+    console.log(elt+", "+mat);
+
+    switch(mat){
+        case "Retour":
+            barreElt();
+            break;
+        case "Parpaing":
+            reloadobject(elt, "parpaing");
+            break;
+        case "Briques":
+            reloadobject(elt, "brick");
+            break;
+        case "Béton cellulaire":
+            reloadobject(elt, "bloc cellulaire");
+            break;
+        case "Bloc coffrant":
+            reloadobject(elt, "bloc coffrant");
+            break;
+        case "Bois laminé":
+            reloadobject(elt, "bois laminé");
+            break;
+        case "Bois massif":
+            reloadobject(elt, "bois massif");
+            break;
+        case "Carrelage":
+            reloadobject(elt, "carrelage");
+            break;
+        case "Moquette":
+            reloadobject(elt, "moquette");
+            break;
+        case "Vinyle":
+            reloadobject(elt, "vinyle");
+            break;
+    }
 }
