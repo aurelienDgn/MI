@@ -196,16 +196,22 @@ function raysGlobal() { //Raycaster et addEventListeners
         }
         else{//map game
             try{
-            if(intersects[0].object.material.transparent == true && intersects[0].object.material.opacity == 0.3 && intersects[0].object.userData.id== 10){
-                intersects[0].object.material.transparent = true;
-                intersects[0].object.material.opacity = 1;
-            }
-            else{
-                intersects[0].object.material.transparent = true;
-                intersects[0].object.material.opacity = 0.3;
-            } 
+                if(intersects[0].object.name == "ceiling"){
+                    if(intersects[0].object.material.transparent == true && intersects[0].object.material.opacity == 0.3){
+                        console.log("1");
+                        intersects[0].object.material.transparent = true;
+                        intersects[0].object.material.opacity = 1;
+                    }
+                    else{
+                        console.log("2");
+                        intersects[0].object.material.transparent = true;
+                        intersects[0].object.material.opacity = 0.3;
+                    }
+                    }
         }catch{
             //console.log("erreur quand on clique autre part qu'un bouton raycaster");
+            console.log("3");
+            console.log(intersects[0].object);
         }
         }
     }
@@ -375,7 +381,8 @@ function loadFirst(){
                 mat1.map = d;
             }
         });*/
-    
+        let modelCeiling = gltf2.scene;
+
         gltf2.scene.name = "ceiling";
     
         gltf2.scene.position.set(-3.45,0.7,2.5);
@@ -385,7 +392,8 @@ function loadFirst(){
         uv.array[0] = 1;*/
     
         scene.add(gltf2.scene);
-    
+        const robotCeiling = scene.getObjectByName("ceiling")
+        const meshCeiling = new THREE.Mesh(robotCeiling.geometry, new THREE.MeshStandardMaterial())
         /*mixer1 = new THREE.AnimationMixer(model1);
         mixer1.clipAction(gltf2.animations[4]).play();*/
     });
