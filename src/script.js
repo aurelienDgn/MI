@@ -178,6 +178,7 @@ function raysGlobal() { //Raycaster et addEventListeners
         raycaster.setFromCamera(pointer, camera);
         const intersects = raycaster.intersectObjects(scene.children);
         if(whScene == 0){//map glob
+            try{
             if (intersects[0].object.userData.id != undefined && intersects[0].object.userData.id <= nbNivFini) {
                 whScene = intersects[0].object.userData.id;
                 removeEver();
@@ -189,8 +190,12 @@ function raysGlobal() { //Raycaster et addEventListeners
             else{
                 console.log("error onClick");
             }
+        } catch {
+            //console.log("erreur quand on clique autre part qu'un bouton raycaster");
+        }
         }
         else{//map game
+            try{
             if(intersects[0].object.material.transparent == true && intersects[0].object.material.opacity == 0.3 && intersects[0].object.userData.id== 10){
                 intersects[0].object.material.transparent = true;
                 intersects[0].object.material.opacity = 1;
@@ -198,7 +203,10 @@ function raysGlobal() { //Raycaster et addEventListeners
             else{
                 intersects[0].object.material.transparent = true;
                 intersects[0].object.material.opacity = 0.3;
-            }
+            } 
+        }catch{
+            //console.log("erreur quand on clique autre part qu'un bouton raycaster");
+        }
         }
     }
 
@@ -386,7 +394,7 @@ function loadFirst(){
     function reloadobject(elt, txture){
     
         let i = scene.getObjectByName(elt);
-        console.log(i);
+        //console.log(i);
         scene.remove(i);
     
     
@@ -453,7 +461,26 @@ function loadFirst(){
     
     
     
-    
+    // Init de la classe Maison
+    const maison = new Maison();
+
+    // Init liste Materiaux
+    let listMat = document.getElementById("listMat");
+
+    let listMur = document.getElementById("listMur");
+    let listSol = document.getElementById("listSol");
+    let listToit = document.getElementById("listToit");
+    let listChauff = document.getElementById("listChauff");
+    let listIso = document.getElementById("listIso");
+
+    let btnValidate = document.getElementById("ok");
+    btnValidate.addEventListener('click', function(){
+        console.log(maison.getMur());
+        console.log(maison.getSol());
+        console.log(maison.getToit());
+        console.log(maison.getChauffage());
+        console.log(maison.getIsolant());
+    });
     
     
     // Initialisation de la barre
@@ -462,7 +489,7 @@ function loadFirst(){
     
     // le tableau sera récup de le json a terme
     
-    let tabElt = ["Murs", "Toit", "Sol", "Chauffage"];
+    let tabElt = ["Murs", "Toit", "Sol", "Chauffage", "Isolant"];
     let imgElt = ["Image/walls.png", "Image/toit.png", "Image/floor.png", "Image/door.png"];
     
     // Tableaux des éléments à modifier
@@ -470,12 +497,14 @@ function loadFirst(){
     let tabMatToit = ["Retour","Tuiles", "Ardoise", "Métal", "Zinc"];
     let tabMatSol = ["Retour","Bois massif", "Bois laminé", "Moquette","Vinyle","Carrelage"];
     let tabMatChauff = ["Retour","Electricité", "Gaz", "Bois", "Solaire"];
+    let tabMatIso = ["Retour","Iso1", "Iso2", "Iso3", "Iso4"];
     
     // Tableaux des images des matériaux des différents éléments
     let imgMatMurs = ["Image/croix.png","Image/mat/parpaing.jpg", "Image/mat/brick.jpg", "Image/mat/bloc coffrant.jpg", "Image/mat/bloc cellulaire.jpg"];
     let imgMatSol = ["Image/croix.png","Image/mat/bois massif.jpg", "Image/mat/bois laminé.jpg", "Image/mat/moquette.jpg","Image/mat/vinyle.jpg", "Image/mat/carrelage.jpg"];
     let imgMatToit = ["Image/croix.png","Image/wood.png", "Image/wood.png", "Image/wood.png"];
     let imgMatChauff = ["Image/croix.png","Image/wood.png", "Image/wood.png", "Image/wood.png"];
+    let imgMatIso = ["Image/croix.png","Image/wood.png", "Image/wood.png", "Image/wood.png", "Image/wood.png"];
     
     let barre = document.getElementById("barre");
     
@@ -500,6 +529,9 @@ function loadFirst(){
                 break;
             case "Chauffage":
                 matElt(tabMatChauff, imgMatChauff, "hot");
+                break;
+            case "Isolant":
+                matElt(tabMatIso, imgMatIso, "iso");
                 break;
         }
     }
@@ -557,6 +589,7 @@ function loadFirst(){
     function barreElt(){
         // Créer les éléments que l'on pourra modifier
     
+        listMat.style.visibility = "visible";
         barre.style.visibility = "visible";
     
         // On enlève ce que contient la barre (au cas ou ou non)
@@ -638,36 +671,158 @@ function loadFirst(){
     function selecElt(elt, mat){
         console.log(elt+", "+mat);
     
+        let index = returnIndexElt(elt);
+
         switch(mat){
             case "Retour":
                 barreElt();
                 break;
             case "Parpaing":
                 reloadobject(elt, "parpaing");
+                maison.setMur("parpaing");
+    
+                listMur.textContent = "- Murs : Parpaing";
                 break;
             case "Briques":
                 reloadobject(elt, "brick");
+                maison.setMur("brick");
+    
+                listMur.textContent = "- Murs : Briques";
                 break;
             case "Béton cellulaire":
                 reloadobject(elt, "bloc cellulaire");
+                maison.setMur("bloc cellulaire");
+    
+                listMur.textContent = "- Murs : Béton cellulaire";
                 break;
             case "Bloc coffrant":
                 reloadobject(elt, "bloc coffrant");
+                maison.setMur("bloc coffrant");
+    
+                listMur.textContent = "- Murs : Bloc coffrant";
                 break;
             case "Bois laminé":
                 reloadobject(elt, "bois laminé");
+                maison.setSol("bois laminé");
+    
+                listSol.textContent = "- Sol : Bois laminé";
                 break;
             case "Bois massif":
                 reloadobject(elt, "bois massif");
+                maison.setSol("bois massif");
+    
+                listSol.textContent = "- Sol : Bois massif";
                 break;
             case "Carrelage":
                 reloadobject(elt, "carrelage");
+                maison.setSol("carrelage");
+    
+                listSol.textContent = "- Sol : Carrelage";
                 break;
             case "Moquette":
                 reloadobject(elt, "moquette");
+                maison.setSol("moquette");
+    
+                listSol.textContent = "- Sol : Moquette";
                 break;
             case "Vinyle":
                 reloadobject(elt, "vinyle");
+                maison.setSol("vinyle");
+    
+                listSol.textContent = "- Sol : Vinyle";
+                break;
+            case "Tuiles":
+                //reloadobject(elt, "vinyle");
+                maison.setToit("tuiles");
+    
+                listToit.textContent = "- Toit : Tuiles";
+                break;
+            case "Ardoise":
+                //reloadobject(elt, "vinyle");
+                maison.setToit("ardoise");
+    
+                listToit.textContent = "- Toit : Ardoise";
+                break;
+            case "Métal":
+                //reloadobject(elt, "vinyle");
+                maison.setToit("métal");
+    
+                listToit.textContent = "- Toit : Métal";
+                break;
+            case "Zinc":
+                //reloadobject(elt, "vinyle");
+                maison.setToit("zinc");
+    
+                listToit.textContent = "- Toit : Zinc";
+                break;
+            case "Electricité":
+                //reloadobject(elt, "vinyle");
+                maison.setChauffage("electricite");
+    
+                listChauff.textContent = "- Chauffage : Electricité";
+                break;
+            case "Gaz":
+                //reloadobject(elt, "vinyle");
+                maison.setChauffage("Gaz");
+    
+                listChauff.textContent = "- Chauffage : Gaz";
+                break;
+            case "Bois":
+                //reloadobject(elt, "vinyle");
+                maison.setChauffage("Bois");
+    
+                listChauff.textContent = "- Chauffage : Bois";
+                break;
+            case "Solaire":
+                //reloadobject(elt, "vinyle");
+                maison.setChauffage("Solaire");
+    
+                listChauff.textContent = "- Chauffage : Solaire";
+                break;
+            case "Iso1":
+                //reloadobject(elt, "vinyle");
+                maison.setIsolant("Iso1");
+    
+                listIso.textContent = "- Isolant : Iso1";
+                break;
+            case "Iso2":
+                //reloadobject(elt, "vinyle");
+                maison.setIsolant("Iso2");
+    
+                listIso.textContent = "- Isolant : Iso2";
+                break;
+            case "Iso3":
+                //reloadobject(elt, "vinyle");
+                maison.setIsolant("Iso3");
+    
+                listIso.textContent = "- Isolant : Iso3";
+                break;
+            case "Iso4":
+                //reloadobject(elt, "vinyle");
+                maison.setIsolant("Iso4");
+    
+                listIso.textContent = "- Isolant : Iso4";
                 break;
         }
     }
+
+    function returnIndexElt(elt){
+    
+        switch(elt){
+            case "Murs":
+                return 0;
+                break;
+            case "Toit":
+                return 2;
+                break;
+            case "Sol":
+                return 1;
+                break;
+            case "Chauffage":
+                return 3;
+                break;
+            case "Isolant":
+                return 4;
+                break;
+        }
+    } 
