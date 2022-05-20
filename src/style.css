@@ -17,5 +17,56 @@ body
     position: fixed;
     top: 0;
     left: 0;
+    z-index: 0;
     outline: none;
+}
+
+
+.cont{
+    display: flex;
+    white-space: nowrap;
+    overflow: auto;
+    visibility: hidden;
+    max-width: 100%;
+    min-width: 90%;
+    min-height: 10%;
+    max-height: 20%;
+    border: 0.3rem solid rgba(139, 112, 36, 0.557);
+    background-color: rgba(139, 112, 36, 0.1);
+    position: fixed;
+    bottom: 0;
+    z-index: 2;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 10px;
+}
+
+.elt{
+    width: 9%;
+    height: 4%;
+    margin: 5px;
+    background-color: rgba(237, 140, 30, 0.1);
+    border: 2mm ridge rgba(237, 140, 30, 0.557);
+}
+
+h4{
+    font-size: 0.6rem;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.img{
+    width: 80px;
+    height: 80px;
+    margin-left: 3px;
+    margin-right: auto;
+}
+
+.nameElt{
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.animHover{
+    background-color: antiquewhite;
 }
