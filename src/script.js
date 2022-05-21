@@ -6,6 +6,9 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { Camera, Scene } from 'three'
 import gsap from 'gsap'
 
+//Init class Level
+const level = new Level();
+
 //INIT
 const gltfLoader = new GLTFLoader()
 //const gui = new dat.GUI()
@@ -181,6 +184,7 @@ function raysGlobal() { //Raycaster et addEventListeners
             try{
             if (intersects[0].object.userData.id != undefined && intersects[0].object.userData.id <= nbNivFini) {
                 whScene = intersects[0].object.userData.id;
+                level.setLevel(intersects[0].object.userData.id);
                 removeEver();
                 loadMapGame();
             }
@@ -468,7 +472,9 @@ function loadFirst(){
     
     
     
-    
+    // Init div solde
+    let soldeDiv = document.getElementById("so");
+    soldeDiv.innerHTML = "Solde : "+level.getSolde(); 
     
     // Init div
     let divCaract = document.getElementById("divCar");
@@ -487,11 +493,12 @@ function loadFirst(){
 
     let btnValidate = document.getElementById("ok");
     btnValidate.addEventListener('click', function(){
-        console.log(maison.getMur());
+        /*console.log(maison.getMur());
         console.log(maison.getSol());
         console.log(maison.getToit());
-        console.log(maison.getChauffage());
-        console.log(maison.getIsolant());
+        console.log(maison.getChauffage());*/
+        //console.log(maison.getIsolant());
+        level.niv(maison.getMur(), maison.getSol(), maison.getToit(), maison.getChauffage());
     });
     
     
@@ -501,7 +508,7 @@ function loadFirst(){
     
     // le tableau sera récup de le json a terme
     
-    let tabElt = ["Murs", "Toit", "Sol", "Chauffage", "Isolant"];
+    let tabElt = ["Murs", "Toit", "Sol", "Chauffage"/*, "Isolant"*/];
     let imgElt = ["Image/walls.png", "Image/toit.png", "Image/floor.png", "Image/door.png"];
     
     // Tableaux des éléments à modifier
@@ -509,14 +516,14 @@ function loadFirst(){
     let tabMatToit = ["Retour","Tuiles", "Ardoise", "Métal", "Zinc"];
     let tabMatSol = ["Retour","Bois massif", "Bois laminé", "Moquette","Vinyle","Carrelage"];
     let tabMatChauff = ["Retour","Electricité", "Gaz", "Bois", "Solaire"];
-    let tabMatIso = ["Retour","Iso1", "Iso2", "Iso3", "Iso4"];
+    //let tabMatIso = ["Retour","Iso1", "Iso2", "Iso3", "Iso4"];
     
     // Tableaux des images des matériaux des différents éléments
     let imgMatMurs = ["Image/croix.png","Image/mat/parpaing.jpg", "Image/mat/brick.jpg", "Image/mat/bloc coffrant.jpg", "Image/mat/bloc cellulaire.jpg"];
     let imgMatSol = ["Image/croix.png","Image/mat/bois massif.jpg", "Image/mat/bois laminé.jpg", "Image/mat/moquette.jpg","Image/mat/vinyle.jpg", "Image/mat/carrelage.jpg"];
     let imgMatToit = ["Image/croix.png","Image/wood.png", "Image/wood.png", "Image/wood.png"];
     let imgMatChauff = ["Image/croix.png","Image/wood.png", "Image/wood.png", "Image/wood.png"];
-    let imgMatIso = ["Image/croix.png","Image/wood.png", "Image/wood.png", "Image/wood.png", "Image/wood.png"];
+    //let imgMatIso = ["Image/croix.png","Image/wood.png", "Image/wood.png", "Image/wood.png", "Image/wood.png"];
     
     let barre = document.getElementById("barre");
     
@@ -541,10 +548,10 @@ function loadFirst(){
                 break;
             case "Chauffage":
                 matElt(tabMatChauff, imgMatChauff, "hot");
-                break;
+                break;/*
             case "Isolant":
                 matElt(tabMatIso, imgMatIso, "iso");
-                break;
+                break;*/
         }
     }
     
@@ -607,6 +614,7 @@ function loadFirst(){
     
         listMat.style.visibility = "visible";
         barre.style.visibility = "visible";
+        soldeDiv.style.visibility = "visible";
     
         // On enlève ce que contient la barre (au cas ou ou non)
         while(barre.firstChild){
@@ -685,7 +693,7 @@ function loadFirst(){
     
     
     function selecElt(elt, mat){
-        console.log(elt+", "+mat);
+        //console.log(elt+", "+mat);
     
         let index = returnIndexElt(elt);
 
@@ -707,7 +715,7 @@ function loadFirst(){
                 break;
             case "Béton cellulaire":
                 reloadobject(elt, "bloc cellulaire");
-                maison.setMur("bloc cellulaire");
+                maison.setMur("beton cellulaire");
     
                 listMur.textContent = "- Murs : Béton cellulaire";
                 break;
@@ -719,7 +727,7 @@ function loadFirst(){
                 break;
             case "Bois laminé":
                 reloadobject(elt, "bois laminé");
-                maison.setSol("bois laminé");
+                maison.setSol("bois lamine");
     
                 listSol.textContent = "- Sol : Bois laminé";
                 break;
@@ -761,7 +769,7 @@ function loadFirst(){
                 break;
             case "Métal":
                 //reloadobject(elt, "vinyle");
-                maison.setToit("métal");
+                maison.setToit("metal");
     
                 listToit.textContent = "- Toit : Métal";
                 break;
@@ -779,23 +787,23 @@ function loadFirst(){
                 break;
             case "Gaz":
                 //reloadobject(elt, "vinyle");
-                maison.setChauffage("Gaz");
+                maison.setChauffage("gaz");
     
                 listChauff.textContent = "- Chauffage : Gaz";
                 break;
             case "Bois":
                 //reloadobject(elt, "vinyle");
-                maison.setChauffage("Bois");
+                maison.setChauffage("bois");
     
                 listChauff.textContent = "- Chauffage : Bois";
                 break;
             case "Solaire":
                 //reloadobject(elt, "vinyle");
-                maison.setChauffage("Solaire");
+                maison.setChauffage("solaire");
     
                 listChauff.textContent = "- Chauffage : Solaire";
                 break;
-            case "Iso1":
+            /*case "Iso1":
                 //reloadobject(elt, "vinyle");
                 maison.setIsolant("Iso1");
     
@@ -818,7 +826,7 @@ function loadFirst(){
                 maison.setIsolant("Iso4");
     
                 listIso.textContent = "- Isolant : Iso4";
-                break;
+                break;*/
         }
     }
 
@@ -836,10 +844,10 @@ function loadFirst(){
                 break;
             case "Chauffage":
                 return 3;
-                break;
+                break;/*
             case "Isolant":
                 return 4;
-                break;
+                break;*/
         }
     } 
 
@@ -900,7 +908,7 @@ function loadFirst(){
             case "Solaire":
                 divCaract.innerHTML = "-qualités : 100% renouvelable, peut aider sur l’électricité également <br> -défauts : nécessite presque toujours un système d’appoint, investissement important ";
                 break;
-            case "Iso1":
+            /*case "Iso1":
                 divCaract.innerHTML = "";
                 break;
             case "Iso2":
@@ -911,7 +919,7 @@ function loadFirst(){
                 break;
             case "Iso4":
                 divCaract.innerHTML = "";
-                break;
+                break;*/
         }
 
     }

@@ -81,3 +81,8 @@ h4{
     float: right;
     margin-right: 80px;
 }
+
+.divSo{
+    margin-left: 10%;
+    visibility: hidden;
+}
