@@ -239,6 +239,9 @@ function loadMapGame() {
     pointLight3.position.x = 0;
     pointLight3.position.y = 0;
     pointLight3.position.z = 2;
+    const pointLight4 = new THREE.PointLight(0xffffff, 2); //Pareil
+    pointLight4.position.set(-7,1.5,5);
+    scene.add(pointLight4);
     scene.add(pointLight);
     scene.add(pointLight2);
     scene.add(pointLight3);
@@ -467,7 +470,8 @@ function loadFirst(){
     
     
     
-    
+    // Init div
+    let divCaract = document.getElementById("divCar");
     
     // Init de la classe Maison
     const maison = new Maison();
@@ -574,6 +578,10 @@ function loadFirst(){
                 // Sélectionne le matériaux cliqué avec l'elt
                 selecElt(elt, tabMat[i]);
             });
+
+            div.addEventListener('mouseover', function(){
+                printCaract(tabMat[i]);
+            })
     
             // Lance une animation de fondu 
             document.getElementById(div.id).animate([
@@ -834,3 +842,76 @@ function loadFirst(){
                 break;
         }
     } 
+
+    function printCaract(mat){
+
+        switch(mat){
+            case "Retour":
+                divCaract.innerHTML = "";
+                break;
+            case "Parpaing":
+                divCaract.innerHTML = "-qualités :bon marché, 100% recyclable <br> -défauts : mauvaise isolation, pareil pour l’isolation sonore";
+                break;
+            case "Briques":
+                divCaract.innerHTML = " -qualités :bonne isolation thermique, résiste très bien au chaud <br> -défauts : un peu coûteux, infiltration d’eau (donc attention aux zones trop humides)";
+                break;
+            case "Béton cellulaire":
+                divCaract.innerHTML = " -qualités : bonne isolation en hiver, excellente en été <br> -défauts : coûteux, se fissure facilement , peut causer des cancers selon des études";
+                break;
+            case "Bloc coffrant":
+                divCaract.innerHTML = "-qualités :très bonne isolation thermique <br> -défauts : très coûteux";
+                break;
+            case "Bois laminé":
+                divCaract.innerHTML = "-qualités : durable dans le temps, peu coûteux <br> -défauts : durée de vie courte, ne convient pas aux pièces humides, peu d’isol. Sonore";
+                break;
+            case "Bois massif":
+                divCaract.innerHTML = "-qualités : durable dans le temps, très bonne isolation thermique <br> -défauts : l’un des plus coûteux du marché, écarts de température qui peuvent causer expansion et rétraction des planches/craquements ";
+                break;
+            case "Carrelage":
+                divCaract.innerHTML = "-qualités : grande résistance aux températures extrêmes, solution la + hygiénique <br> -défauts : coûteux, lourd ";
+                break;
+            case "Moquette":
+                divCaract.innerHTML = "-qualités : très peu coûteux, isolation sonore et thermique bonnes <br> -défauts : emprisonne la poussière, difficile à entretenir";
+                break;
+            case "Vinyle":
+                divCaract.innerHTML = "-qualités : le – coûteux, bonne résistance à l’humidité <br> -défauts : contient des polluants, souvent inflammable (c’est du plastique)";
+                break;
+            case "Tuiles":
+                divCaract.innerHTML = " -qualités : bon isolement thermique , résistante au feu <br> -défauts :  si bcp de tuiles -> cher, lourd donc à éviter sur les murs fins";
+                break;
+            case "Ardoise":
+                divCaract.innerHTML = "-qualités : Très étanche, solide ; bon isolant (matériau naturel donc écologique) <br> -défaut :  coût élevé";
+                break;
+            case "Métal":
+                divCaract.innerHTML = "-qualités : Efficace contre la neige, très résistant, 100% recyclable donc écologique <br> -défauts :  Mauvaise isolation sonore";
+                break;
+            case "Zinc":
+                divCaract.innerHTML = "-qualités : étanche, résistant aux intempéries, léger <br> -défauts :  coût cher, lourd donc à éviter sur les murs fins, mauvaise isolation son. s’il fait chaud";
+                break;
+            case "Electricité":
+                divCaract.innerHTML = "-qualités : empreinte carbone faible, coût modulable selon l’isolation <br> -défauts : chaleur mal répartie dans les grandes pièces, chaleur qui assèche l’air";
+                break;
+            case "Gaz":
+                divCaract.innerHTML = " -qualités : peu coûteux, bonne répartition de chaleur <br> -défauts : polluant, pas accessible à tous (zones rurales où les tuyaux ne passent pas toujours)";
+                break;
+            case "Bois":
+                divCaract.innerHTML = " -qualités : peu coûteux, très écologique <br> -défauts : encombrant (à éviter dans les maisons peu spacieuses), éviter l’humidité sinon le bois chauffera mal";
+                break;
+            case "Solaire":
+                divCaract.innerHTML = "-qualités : 100% renouvelable, peut aider sur l’électricité également <br> -défauts : nécessite presque toujours un système d’appoint, investissement important ";
+                break;
+            case "Iso1":
+                divCaract.innerHTML = "";
+                break;
+            case "Iso2":
+                divCaract.innerHTML = "";
+                break;
+            case "Iso3":
+                divCaract.innerHTML = "";
+                break;
+            case "Iso4":
+                divCaract.innerHTML = "";
+                break;
+        }
+
+    }

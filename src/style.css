@@ -76,3 +76,8 @@ h4{
     z-index: 1;
     visibility: hidden;
 }
+
+.divCar{
+    float: right;
+    margin-right: 80px;
+}
