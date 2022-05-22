@@ -41,6 +41,7 @@ const controls = new OrbitControls(camera, canvas)
 controls.enableDamping = true
 const colorWh = 0xfafafa;
 const colorRd = 0xff0000; 
+const colorBk = 0x000000;
 const colorValid = 0x16AAE1;
 const addNewBoxMesh = (x, y, z, nb) => { //modele balise niveau placable
     const boxGeometry = new THREE.SphereGeometry(0.5, 32, 16);
@@ -48,8 +49,13 @@ const addNewBoxMesh = (x, y, z, nb) => { //modele balise niveau placable
     if(nb == nbNivFini){
         boxMaterial = new THREE.MeshPhongMaterial({ color: colorWh, });
     }
-    else if(nb > nbNivFini){
+    else if(nb > nbNivFini && nb <= nivMax){
         boxMaterial = new THREE.MeshPhongMaterial({ color: colorRd, });
+        boxMaterial.transparent = false;
+        boxMaterial.opacity = 1;
+    }
+    else if(nb > nbNivFini && nb > nivMax){
+        boxMaterial = new THREE.MeshPhongMaterial({ color: colorBk, });
         boxMaterial.transparent = false;
         boxMaterial.opacity = 1;
     }
@@ -64,7 +70,8 @@ const addNewBoxMesh = (x, y, z, nb) => { //modele balise niveau placable
 
 //game variables
 let whScene = 0; //0 map gl | 1-x num jeu
-let nbNivFini = 3; //nb de niveaux déjà fait
+let nbNivFini = 1; //nb du niv actuel
+let nivMax = 3;
 
 loadMapGlob();
 
@@ -158,8 +165,11 @@ function raysGlobal() { //Raycaster et addEventListeners
             if(preums.userData.id == nbNivFini){
                 preums.material.color.set(colorWh);
             }
-            else if(preums.userData.id > nbNivFini){
+            else if(preums.userData.id > nbNivFini && preums.userData.id <= nivMax){
                 preums.material.color.set(colorRd);
+            }
+            else if(preums.userData.id > nbNivFini && preums.userData.id > nivMax){
+                preums.material.color.set(colorBk);
             }
             else{
                 preums.material.color.set(colorValid);
@@ -170,7 +180,15 @@ function raysGlobal() { //Raycaster et addEventListeners
         raycaster.setFromCamera(pointer, camera);
         const intersects = raycaster.intersectObjects(scene.children);
         if (intersects.length > 0) {
-            intersects[0].object.material.color.set(colorRd);
+            if(intersects[0].object.userData.id <= nbNivFini){
+                intersects[0].object.material.color.set(colorRd);
+            }
+            else if(intersects[0].object.userData.id > nbNivFini && intersects[0].object.userData.id <= nivMax){
+                intersects[0].object.material.color.set(0x1C0101);
+            }
+            else{
+                intersects[0].object.material.color.set(0x0C0C0C);
+            }
             preums = intersects[0].object;
         }
     }
