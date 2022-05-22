@@ -516,6 +516,7 @@ function loadFirst(){
             nbNivFini += 1;
             removeEver();
             loadMapGlob();
+            printCaract("Retour");
         }
     });
     
@@ -774,49 +775,45 @@ function loadFirst(){
                 listSol.textContent = "- Sol : Vinyle";
                 break;
             case "Tuiles":
-                //reloadobject(elt, "vinyle");
+                reloadobject(elt, "tuiles");
                 maison.setToit("tuiles");
     
                 listToit.textContent = "- Toit : Tuiles";
                 break;
             case "Ardoise":
-                //reloadobject(elt, "vinyle");
+                reloadobject(elt, "ardoise");
                 maison.setToit("ardoise");
     
                 listToit.textContent = "- Toit : Ardoise";
                 break;
             case "Métal":
-                //reloadobject(elt, "vinyle");
+                reloadobject(elt, "metal");
                 maison.setToit("metal");
     
                 listToit.textContent = "- Toit : Métal";
                 break;
             case "Zinc":
-                //reloadobject(elt, "vinyle");
+                reloadobject(elt, "zinc");
                 maison.setToit("zinc");
     
                 listToit.textContent = "- Toit : Zinc";
                 break;
             case "Electricité":
-                //reloadobject(elt, "vinyle");
                 maison.setChauffage("electricite");
     
                 listChauff.textContent = "- Chauffage : Electricité";
                 break;
             case "Gaz":
-                //reloadobject(elt, "vinyle");
                 maison.setChauffage("gaz");
     
                 listChauff.textContent = "- Chauffage : Gaz";
                 break;
             case "Bois":
-                //reloadobject(elt, "vinyle");
                 maison.setChauffage("bois");
     
                 listChauff.textContent = "- Chauffage : Bois";
                 break;
             case "Solaire":
-                //reloadobject(elt, "vinyle");
                 maison.setChauffage("solaire");
     
                 listChauff.textContent = "- Chauffage : Solaire";
