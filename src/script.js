@@ -537,10 +537,10 @@ function loadFirst(){
     //let tabMatIso = ["Retour","Iso1", "Iso2", "Iso3", "Iso4"];
     
     // Tableaux des images des matériaux des différents éléments
-    let imgMatMurs = ["Image/croix.png","Image/mat/parpaing.jpg", "Image/mat/brick.jpg", "Image/mat/bloc coffrant.jpg", "Image/mat/bloc cellulaire.jpg"];
-    let imgMatSol = ["Image/croix.png","Image/mat/bois massif.jpg", "Image/mat/bois laminé.jpg", "Image/mat/moquette.jpg","Image/mat/vinyle.jpg", "Image/mat/carrelage.jpg"];
-    let imgMatToit = ["Image/croix.png","Image/wood.png", "Image/wood.png", "Image/wood.png"];
-    let imgMatChauff = ["Image/croix.png","Image/wood.png", "Image/wood.png", "Image/wood.png"];
+    let imgMatMurs = ["Image/croix.png","Image/murs/cinder.png", "Image/murs/brick.jpg", "Image/murs/cinder.png", "Image/murs/concrete.png"];
+    let imgMatSol = ["Image/croix.png","Image/sol/genFloor.png", "Image/sol/genFloor.png", "Image/sol/genFloor.png","Image/sol/genFloor.png", "Image/sol/genFloor.png"];
+    let imgMatToit = ["Image/croix.png","Image/toit.png", "Image/toit.png", "Image/toit/metal.png", "Image/toit/metal.png"];
+    let imgMatChauff = ["Image/croix.png","Image/chauffage/electric.png", "Image/chauffage/gaz.png", "Image/chauffage/wood.png", "Image/chauffage/sol.png"];
     //let imgMatIso = ["Image/croix.png","Image/wood.png", "Image/wood.png", "Image/wood.png", "Image/wood.png"];
     
     let barre = document.getElementById("barre");
