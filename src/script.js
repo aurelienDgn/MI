@@ -206,7 +206,7 @@ function raysGlobal() { //Raycaster et addEventListeners
                 removeEver();
                 loadMapGame();
             }
-            else if(intersects[0].object.userData.id > nbNivFini){//marche pas
+            else if(intersects[0].object.userData.id > nbNivFini || intersects[0].object.userData.id > nivMax){//marche pas
                 console.log("niveau bloqué");
             }
             else{
