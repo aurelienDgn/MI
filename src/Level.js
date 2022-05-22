@@ -215,6 +215,7 @@ class Level{
         
         if(mur == "Rien" || sol == "Rien" || toit == "Rien" || chauff == "Rien"){
             alert("Il vous manque des matériaux à sélectionner");
+            return false;
         } else{
 
             let prixM = this.getPrixMur(mur);
@@ -226,7 +227,7 @@ class Level{
 
             if((this.solde-pay) < 0){
                 alert("Vous n'avez pas assez d'argent pour cela, car cela coûte : "+pay);
-
+                return false;
             } else{
 
                 let noteM = this.getNoteMur(mur);
@@ -237,6 +238,7 @@ class Level{
                 let final = (noteM+noteS+noteT+noteC)*0.25;
         
                 alert("Votre score : "+final+" /20");
+                return true;
             }
 
 

@@ -511,12 +511,12 @@ function loadFirst(){
 
     let btnValidate = document.getElementById("ok");
     btnValidate.addEventListener('click', function(){
-        /*console.log(maison.getMur());
-        console.log(maison.getSol());
-        console.log(maison.getToit());
-        console.log(maison.getChauffage());*/
-        //console.log(maison.getIsolant());
-        level.niv(maison.getMur(), maison.getSol(), maison.getToit(), maison.getChauffage());
+        
+        if(level.niv(maison.getMur(), maison.getSol(), maison.getToit(), maison.getChauffage())){
+            nbNivFini += 1;
+            removeEver();
+            loadMapGlob();
+        }
     });
     
     
