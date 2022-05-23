@@ -517,6 +517,14 @@ function loadFirst(){
             removeEver();
             loadMapGlob();
             whScene = 0;
+            
+            listMur.textContent = "- Murs :";
+            listSol.textContent = "- Sol :";
+            listToit.textContent = "- Toit :";
+            listChauff.textContent = "- Isolant :";
+            listMat.style.visibility = "hidden";
+            barre.style.visibility = "hidden";
+            soldeDiv.style.visibility = "hidden";
             printCaract("Retour");
         }
     });
@@ -533,9 +541,13 @@ function loadFirst(){
     
     // Tableaux des éléments à modifier
     let tabMatMurs = ["Retour","Parpaing", "Briques", "Bloc coffrant", "Béton cellulaire"];
+    let prixM = [800,2000,4000,2800];
     let tabMatToit = ["Retour","Tuiles", "Ardoise", "Métal", "Zinc"];
+    let prixT = [500,1000,700,900];
     let tabMatSol = ["Retour","Bois massif", "Bois laminé", "Moquette","Vinyle","Carrelage"];
+    let prixS = [1200,600,400,200,800];
     let tabMatChauff = ["Retour","Electricité", "Gaz", "Bois", "Solaire"];
+    let prixC = [500,700,600,1300];
     //let tabMatIso = ["Retour","Iso1", "Iso2", "Iso3", "Iso4"];
     
     // Tableaux des images des matériaux des différents éléments
@@ -547,6 +559,19 @@ function loadFirst(){
     
     let barre = document.getElementById("barre");
     
+    function getPrix(elt){
+
+        switch (elt){
+            case "house":
+                return prixM;
+            case "ceiling":
+                return prixT;
+            case "floor":
+                return prixS;
+            case "hot":
+                return prixC;
+        }
+    }
     
     function barreMat(mat){
         // Fonction affichant les différents matériaux d'un élément de la maison que l'on peut modifier
@@ -577,7 +602,7 @@ function loadFirst(){
     
     function matElt(tabMat, imgTab, elt){
         // Fonction qui affiche les matériaux dispo en fct de l'élément passé en param
-        
+        let j = 0;
         for(let i=0;i<tabMat.length;i++){
             // Création des div 
             let div = document.createElement("div");
@@ -589,10 +614,18 @@ function loadFirst(){
             img.src = imgTab[i];
             img.className = "img";
         
+            //Get price
+            let prixx = getPrix(elt);
+
             // Création du text
             let p = document.createElement("h4");
             p.className = "nameElt";
             p.innerText = tabMat[i];
+
+            if(i != 0){
+                p.innerText += ", "+prixx[j]+"€";
+                j++;
+            }
         
             // On ajoute texte et image à la div
             div.appendChild(img);
