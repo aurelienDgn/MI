@@ -522,6 +522,13 @@ function loadFirst(){
             listSol.textContent = "- Sol :";
             listToit.textContent = "- Toit :";
             listChauff.textContent = "- Isolant :";
+
+            maison.setMur("Rien");
+            maison.setSol("Rien");
+            maison.setToit("Rien");
+            maison.setChauffage("Rien");
+
+
             listMat.style.visibility = "hidden";
             barre.style.visibility = "hidden";
             soldeDiv.style.visibility = "hidden";
