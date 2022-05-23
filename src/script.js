@@ -204,7 +204,7 @@ function raysGlobal() { //Raycaster et addEventListeners
                 whScene = intersects[0].object.userData.id;
                 level.setLevel(intersects[0].object.userData.id);
                 removeEver();
-                loadMapGame();
+                loadMapGame(intersects[0].object.userData.id);
             }
             else if(intersects[0].object.userData.id > nbNivFini || intersects[0].object.userData.id > nivMax){//marche pas
                 console.log("niveau bloqué");
@@ -242,7 +242,7 @@ function raysGlobal() { //Raycaster et addEventListeners
     window.addEventListener('click', onClick); //click ou mouseup au choix
 }
 
-function loadMapGame() {
+function loadMapGame(id) {
     camera.position.x = 11; //Position de la caméra
     camera.position.y = 3;
     camera.position.z = 0;                             //Pour la caméra qui va transitionner on commence pas à 0
@@ -274,15 +274,28 @@ function loadMapGame() {
     camera.position.z = 0;                             //Pour la caméra qui va transitionner on commence pas à 0
     camera.lookAt(-10, -25, 0);
     let tl=gsap.timeline(); //sert à l'animation
-    gltfLoader.load('firstterrain_principled.glb', function (gltf) { //Le modèle du sol ,vient de blender
-        //gltf.scene.scale.set(0.5, 0.5, 0.5);
-        gltf.scene.rotation.y = 4.7;
-        scene.add(gltf.scene); //Première fois qu'on load la scène, elle apparait donc dès le début
-        /**
-         * Animation de départ (compris dans le loader)
-         */
-        tl.to(camera.position, { x: 10, y: 8, ease: "none", duration: 2 });
-    });
+    if(id){
+        gltfLoader.load('firstterrain_principled.glb', function (gltf) { //Le modèle du sol ,vient de blender
+            //gltf.scene.scale.set(0.5, 0.5, 0.5);
+            gltf.scene.rotation.y = 4.7;
+            scene.add(gltf.scene); //Première fois qu'on load la scène, elle apparait donc dès le début
+            /**
+             * Animation de départ (compris dans le loader)
+             */
+            tl.to(camera.position, { x: 10, y: 8, ease: "none", duration: 2 });
+        });
+    }
+    if(id == 10){//a faire mieux
+        gltfLoader.load('Desert.glb', function (gltf) { //Le modèle du sol ,vient de blender
+            //gltf.scene.scale.set(0.5, 0.5, 0.5);
+            gltf.scene.rotation.y = 4.7;
+            scene.add(gltf.scene); //Première fois qu'on load la scène, elle apparait donc dès le début
+            /**
+             * Animation de départ (compris dans le loader)
+             */
+            tl.to(camera.position, { x: 10, y: 8, ease: "none", duration: 2 });
+        });
+    }
 }
 
 function finDeGame(){ //ce qui est fait quand on finit un niveau (gg)
@@ -513,7 +526,9 @@ function loadFirst(){
     btnValidate.addEventListener('click', function(){
         
         if(level.niv(maison.getMur(), maison.getSol(), maison.getToit(), maison.getChauffage())){
-            nbNivFini += 1;
+            if(whScene == nbNivFini){
+                nbNivFini += 1;
+            }
             removeEver();
             loadMapGlob();
             whScene = 0;
