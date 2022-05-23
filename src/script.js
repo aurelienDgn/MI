@@ -526,7 +526,7 @@ function loadFirst(){
     btnValidate.addEventListener('click', function(){
         
         if(level.niv(maison.getMur(), maison.getSol(), maison.getToit(), maison.getChauffage())){
-            if(whScene == nbNivFini){
+            if(whScene == nbNivFini && whScene != nivMax){
                 nbNivFini += 1;
             }
             removeEver();
