@@ -516,6 +516,7 @@ function loadFirst(){
             nbNivFini += 1;
             removeEver();
             loadMapGlob();
+            whScene = 0;
             printCaract("Retour");
         }
     });
